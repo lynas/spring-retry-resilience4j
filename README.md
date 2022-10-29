@@ -3,9 +3,9 @@
 
 ### required dependency
 ```
-	implementation("io.github.resilience4j:resilience4j-spring-boot2:1.7.1")
-	implementation("org.springframework.boot:spring-boot-starter-actuator") // required in classpath for resilience4j
-	implementation("org.springframework.boot:spring-boot-starter-aop") // required in classpath for resilience4j
+implementation("io.github.resilience4j:resilience4j-spring-boot2:1.7.1")
+implementation("org.springframework.boot:spring-boot-starter-actuator") // required in classpath for resilience4j
+implementation("org.springframework.boot:spring-boot-starter-aop") // required in classpath for resilience4j
 
 ```
 

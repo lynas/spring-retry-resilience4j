@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 10
+      waitDuration: 1000
+      retryExceptions:
+        - java.lang.Exception
+  instances:
+    order-service:
+      baseConfig: default
+

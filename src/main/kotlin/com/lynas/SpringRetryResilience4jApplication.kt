@@ -1,5 +1,6 @@
 package com.lynas
 
+import io.github.resilience4j.common.retry.configuration.RetryConfigCustomizer
 import io.github.resilience4j.retry.annotation.Retry
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,18 +8,26 @@ import org.springframework.context.annotation.Bean
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
-import java.util.*
+import java.time.Duration
+import java.util.Date
 
 @SpringBootApplication
 class SpringRetryResilience4jApplication {
 
 	@Bean
 	fun restTemplate() = RestTemplate()
+
+	@Bean
+	fun retryConfigCustomizer(): RetryConfigCustomizer {
+		return RetryConfigCustomizer.of("orderservice"){
+			it.maxAttempts(10)
+			it.waitDuration(Duration.ofSeconds(10))
+			it.retryExceptions(Exception::class.java)
+		}
+	}
 }
 
-fun main(args: Array<String>) {
-	runApplication<SpringRetryResilience4jApplication>(*args)
-}
+
 
 @RestController
 class DemoController(
@@ -26,9 +35,8 @@ class DemoController(
 ) {
 
 	@GetMapping("/consumer")
-	@Retry(name = "order-service", fallbackMethod = "serviceNotAvailable")
+	@Retry(name = "orderservice", fallbackMethod = "serviceNotAvailable")
 	fun demo() : String? {
-		println("Time")
 		println(Date())
 		return restTemplate.getForObject(
 			"http://localhost:8080/demo",
@@ -38,4 +46,8 @@ class DemoController(
 
 	fun serviceNotAvailable(e: Exception)  = "service Not Available"
 
+}
+
+fun main(args: Array<String>) {
+	runApplication<SpringRetryResilience4jApplication>(*args)
 }
